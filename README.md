@@ -1,3 +1,5 @@
+I forked https://github.com/atdt/wmf-vagrant.git to adapt it to Wikidata.
+
 wmf-vagrant
 ===========
 
