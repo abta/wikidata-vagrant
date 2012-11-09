@@ -1,3 +1,15 @@
 [submodule "mediawiki"]
 	path = mediawiki
 	url = https://gerrit.wikimedia.org/r/p/mediawiki/core.git
+[submodule "extensions/Diff"]
+	path = extensions/Diff
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Diff.git
+[submodule "extensions/DataValues"]
+	path = extensions/DataValues
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/DataValues.git
+[submodule "extensions/UniversalLanguageSelector"]
+	path = extensions/UniversalLanguageSelector
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/UniversalLanguageSelector.git
+[submodule "extensions/Wikibase"]
+	path = extensions/Wikibase
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Wikibase.git
