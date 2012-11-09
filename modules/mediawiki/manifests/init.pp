@@ -32,26 +32,27 @@ class mediawiki {
 
 	apache::disable_site { "default": name => "default"; }
 
-	exec { 'mediawiki_setup':
+	exec { 'repo_setup':
 		require => [Package["mysql-server"], Exec["mysql-set-password"], Package["apache2"]],
-		creates => "/srv/LocalSettings.php",
-		command => "/usr/bin/php /srv/mediawiki/maintenance/install.php testwiki admin --pass vagrant --dbname testwiki --dbuser root --dbpass vagrant --server $mwserver --scriptpath '/srv/mediawiki' --confpath '/srv/'",
+		creates => "/srv/repo/LocalSettings.php",
+		command => "/usr/bin/php /srv/repo/maintenance/install.php Wikidata-repo admin --pass vagrant --dbname repo --dbuser root --dbpass vagrant --server $mwserver --scriptpath '/srv/repo' --confpath '/srv/repo/'",
 		logoutput => "on_failure";
 	} ->
 
-	file { '/var/www/srv':
+	file { "/var/www/srv":
 		ensure => 'directory';
 	}
 
-	file { '/var/www/srv/mediawiki':
+	file { "/var/www/srv/repo":
 		require => File['/var/www/srv'],
 		ensure  => 'link',
-		target  => '/srv/mediawiki';
+		target  => '/srv/repo';
 	}
 
-	file { '/srv/mediawiki/LocalSettings.php':
-		require => Exec["mediawiki_setup"],
-		content => template('mediawiki/localsettings'),
+	file { "/srv/repo/LocalSettings.php":
+		require => Exec["repo_setup"],
+		content => template('wikidata/wikibase-repo-localsettings'),
 		ensure => present;
 	}
+
 }

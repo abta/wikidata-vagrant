@@ -42,19 +42,39 @@ class apache {
 		ensure => present;
 	}
 
+	file { "/var/www/index.html":
+		ensure => 'link',
+		target => '/srv/index.html';
+	}
+
 	file { "/srv/favicon.ico":
 		source => "puppet:///modules/apache/favicon.ico",
 		ensure => present;
 	}
 
+	file { "/var/www/favicon.ico":
+		ensure => 'link',
+		target => '/srv/favicon.ico';
+	}
+
 	file { "/srv/style.css":
-		source => "puppet:///modules/apache/srv/style.css",
+		source => "puppet:///modules/apache/style.css",
 		ensure => present;
+	}
+
+	file { "/var/www/style.css":
+		ensure => 'link',
+		target => '/srv/style.css';
 	}
 
 	file { "/srv/Wikidata-logo-demo.png":
 		source => "puppet:///modules/apache/Wikidata-logo-demo.png",
 		ensure => present;
+	}
+
+	file { "/var/www/Wikidata-logo-demo.png":
+		ensure => 'link',
+		target => '/srv/Wikidata-logo-demo.png';
 	}
 
 }

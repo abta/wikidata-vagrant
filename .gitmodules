@@ -1,6 +1,3 @@
-[submodule "mediawiki"]
-	path = mediawiki
-	url = https://gerrit.wikimedia.org/r/p/mediawiki/core.git
 [submodule "extensions/Diff"]
 	path = extensions/Diff
 	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Diff.git
