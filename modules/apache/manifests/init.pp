@@ -36,4 +36,25 @@ class apache {
 		before => Service["apache2"];
 	}
 
+	
+	file { "/srv/index.html":
+		source => "puppet:///modules/apache/index.html",
+		ensure => present;
+	}
+
+	file { "/srv/favicon.ico":
+		source => "puppet:///modules/apache/favicon.ico",
+		ensure => present;
+	}
+
+	file { "/srv/style.css":
+		source => "puppet:///modules/apache/srv/style.css",
+		ensure => present;
+	}
+
+	file { "/srv/Wikidata-logo-demo.png":
+		source => "puppet:///modules/apache/Wikidata-logo-demo.png",
+		ensure => present;
+	}
+
 }
