@@ -1,0 +1,34 @@
+<?php
+#####################################################################
+### THIS FILE IS MANAGED BY PUPPET
+### puppet:///templates/mediawiki/labs-localsettings
+###
+###  Changes to this file will be clobbered by Puppet.
+###  If you need to hand-edit local settings, modify
+###  LocalSettings.php in the Vagrant project root.
+###
+#####################################################################
+
+require( '../LocalSettings.php' );
+
+$wgArticlePath      = "/wiki/$1";
+
+
+// Wikidata: Wikibase lib and repo extensions
+// (dependencies: Diff, DataValues and ULS extensions)
+require_once( "$IP/extensions/Diff/Diff.php");
+require_once( "$IP/extensions/DataValues/DataValues.php" );
+require_once( "$IP/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
+require_once( "$IP/extensions/Wikibase/lib/WikibaseLib.php");
+require_once( "$IP/extensions/Wikibase/repo/Wikibase.php");
+
+// Debug settings
+$wgDebugToolbar = true;
+$wgShowExceptionDetails = true;
+$wgEnableJavaScriptTest = true;
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+
+// Include the Wikidata example settings file
+require_once( "$IP/extensions/Wikibase/repo/ExampleSettings.php" );

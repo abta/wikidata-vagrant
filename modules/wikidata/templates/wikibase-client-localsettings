@@ -1,0 +1,44 @@
+<?php
+#####################################################################
+### THIS FILE IS MANAGED BY PUPPET
+### puppet:///templates/mediawiki/labs-localsettings
+###
+###  Changes to this file will be clobbered by Puppet.
+###  If you need to hand-edit local settings, modify
+###  LocalSettings.php in the Vagrant project root.
+###
+#####################################################################
+
+require( '../LocalSettings.php' );
+
+$wgArticlePath      = "/wiki/$1";
+
+
+// Wikidata: Wikibase lib and client extensions
+// (dependencies: Diff, DataValues and ULS extensions)
+require_once( "$IP/extensions/Diff/Diff.php");
+require_once( "$IP/extensions/DataValues/DataValues.php" );
+require_once( "$IP/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
+require_once( "$IP/extensions/Wikibase/lib/WikibaseLib.php");
+require_once( "$IP/extensions/Wikibase/client/WikibaseClient.php");
+
+
+// Configuration of Wikibase Client
+//$wgWBSettings['namespaces'] = array( NS_MAIN, NS_CATEGORY );
+$wgWBSettings['repoBase'] = 'http://localhost/repo/wiki/';
+$wgWBSettings['repoApi'] = 'http://localhost/repo/w/api.php';
+$wgWBSettings['siteGlobalID'] = 'enwiki';
+$wgWBSettings['siteGroup'] = 'wiki';
+$wgWBSettings['sort'] = 'code';
+$wgWBSettings['sortPrepend'] = array( 'en' );
+// Database name of the repository, for use by the pollForChanges script.
+// This requires the given database name to be known to LBFactory, see
+// $wgLBFactoryConf below.
+$wgWBSettings['changesDatabase'] = "repo";
+
+// debug settings
+$wgDebugToolbar = true;
+$wgShowExceptionDetails = true;
+$wgEnableJavaScriptTest = true;
+ini_set("display_errors", 1);
+
