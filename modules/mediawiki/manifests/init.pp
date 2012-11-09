@@ -16,6 +16,20 @@ class mediawiki {
 		require => File["/etc/apache2/sites-available/wiki"];
 	}
 
+	file { "/etc/apache2/sites-available/repo":
+		mode => 644,
+		owner => root,
+		group => root,
+		content => template("apache/sites/repo"),
+		ensure => present,
+		require => Package["apache2"];
+	} ->
+
+	apache::enable_site { "repo":
+		name => "repo",
+		require => File["/etc/apache2/sites-available/repo"];
+	}
+
 	apache::disable_site { "default": name => "default"; }
 
 	exec { 'mediawiki_setup':
