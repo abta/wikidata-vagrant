@@ -2,7 +2,7 @@ class mediawiki {
 
 	require mysql
 
-	$mwserver = "http://127.0.0.1:8000"
+	$mwserver = "http://127.0.0.1:8080"
 
 	file { "/etc/apache2/sites-available/wiki":
 		mode => 644,
