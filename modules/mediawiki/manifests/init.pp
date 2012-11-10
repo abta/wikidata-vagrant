@@ -1,6 +1,8 @@
 class mediawiki {
 
-	$mwserver = "http://127.0.0.1:8080"
+	require mysql
+
+	$mwserver = "http://127.0.0.1:8000"
 
 	file { "/etc/apache2/sites-available/wiki":
 		mode => 644,
@@ -32,12 +34,17 @@ class mediawiki {
 
 	apache::disable_site { "default": name => "default"; }
 
-	exec { 'repo_setup':
-		require => [Package["mysql-server"], Exec["mysql-set-password"], Package["apache2"]],
-		creates => "/srv/repo/LocalSettings.php",
-		command => "/usr/bin/php /srv/repo/maintenance/install.php Wikidata-repo admin --pass vagrant --dbname repo --dbuser root --dbpass vagrant --server $mwserver --scriptpath '/srv/repo' --confpath '/srv/repo/'",
+	file { "/srv/orig/":
+		ensure => 'directory';
+	}
+
+	exec { "repo_setup":
+		#require => File["/srv/orig"],
+		require => [Exec["mysql-set-password"], Service["apache2"], File["/srv/orig"]],
+		creates => "/srv/orig/LocalSettings.php",
+		command => "/usr/bin/php /srv/repo/maintenance/install.php Wikidata-repo admin --pass vagrant --dbname repo --dbuser root --dbpass vagrant --server '$mwserver' --scriptpath '/srv/repo' --confpath '/srv/orig/'",
 		logoutput => "on_failure";
-	} ->
+	}
 
 	file { "/var/www/srv":
 		ensure => 'directory';
@@ -49,10 +56,29 @@ class mediawiki {
 		target  => '/srv/repo';
 	}
 
-	file { "/srv/repo/LocalSettings.php":
+# update script I
+	exec { "update":
 		require => Exec["repo_setup"],
+		command => "/usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/orig/LocalSettings.php'",
+		unless => "/usr/bin/test -e /srv/repo/LocalSettings.php";
+	}
+
+# get Wikidata-specific stuff AFTER MW is up
+	file { "/srv/repo/LocalSettings.php":
+		require => [Exec["repo_setup"], Exec["update"]],
 		content => template('wikidata/wikibase-repo-localsettings'),
 		ensure => present;
 	}
 
+# update script II
+	exec { "update2":
+		require => [Exec["update"], File["/srv/repo/LocalSettings.php"]],
+		command => "/usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'";
+	}
+
+#	file { '/srv/client/LocalSettings.php':
+#		require => Exec["client_setup"],
+#		content => template('wikidata/wikibase-client-localsettings'),
+#		ensure => present;
+#	}
 }

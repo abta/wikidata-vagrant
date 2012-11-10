@@ -36,7 +36,7 @@ class apache {
 		before => Service["apache2"];
 	}
 
-	
+# files for apache document root
 	file { "/srv/index.html":
 		source => "puppet:///modules/apache/index.html",
 		ensure => present;

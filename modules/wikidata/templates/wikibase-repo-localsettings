@@ -8,19 +8,18 @@
 ###  LocalSettings.php in the Vagrant project root.
 ###
 #####################################################################
-
-require( '../LocalSettings.php' );
+require_once( '/srv/orig/LocalSettings.php' );
 
 $wgArticlePath      = "/wiki/$1";
 
 
 // Wikidata: Wikibase lib and repo extensions
 // (dependencies: Diff, DataValues and ULS extensions)
-require_once( "$IP/extensions/Diff/Diff.php");
-require_once( "$IP/extensions/DataValues/DataValues.php" );
-require_once( "$IP/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
-require_once( "$IP/extensions/Wikibase/lib/WikibaseLib.php");
-require_once( "$IP/extensions/Wikibase/repo/Wikibase.php");
+require_once( "/srv/extensions/Diff/Diff.php");
+require_once( "/srv/extensions/DataValues/DataValues.php" );
+require_once( "/srv/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
+require_once( "/srv/extensions/Wikibase/lib/WikibaseLib.php");
+require_once( "/srv/extensions/Wikibase/repo/Wikibase.php");
 
 // Debug settings
 $wgDebugToolbar = true;
@@ -31,4 +30,4 @@ ini_set("display_errors", 1);
 
 
 // Include the Wikidata example settings file
-require_once( "$IP/extensions/Wikibase/repo/ExampleSettings.php" );
+require_once( "/srv/extensions/Wikibase/repo/ExampleSettings.php" );

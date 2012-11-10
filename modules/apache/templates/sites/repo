@@ -14,8 +14,8 @@
                 allow from all
         </Directory>
 
-        Alias /repo/w /srv/mediawiki
-        Alias /repo/wiki /srv/mediawiki/index.php
+        Alias /repo/w /var/www/srv/repo
+        Alias /wiki /var/www/srv/repo/index.php
 
         ErrorLog /var/log/apache2/error.log
 
