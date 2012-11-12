@@ -38,14 +38,20 @@ class apache {
 	}
 
 # files for apache document root
+
+	file { "/var/www":
+		ensure => directory;
+	}
+
 	file { "/srv/index.html":
 		source => "puppet:///modules/apache/index.html",
 		ensure => present;
 	}
 
 	file { "/var/www/index.html":
-		ensure => 'link',
-		target => '/srv/index.html';
+		ensure => "link",
+		target => "/srv/index.html",
+		require => File["/var/www"];
 	}
 
 	file { "/srv/favicon.ico":
@@ -55,7 +61,8 @@ class apache {
 
 	file { "/var/www/favicon.ico":
 		ensure => 'link',
-		target => '/srv/favicon.ico';
+		target => '/srv/favicon.ico',
+		require => File["/var/www"];
 	}
 
 	file { "/srv/style.css":
@@ -65,7 +72,8 @@ class apache {
 
 	file { "/var/www/style.css":
 		ensure => 'link',
-		target => '/srv/style.css';
+		target => '/srv/style.css',
+		require => File["/var/www"];
 	}
 
 	file { "/srv/Wikidata-logo-demo.png":
@@ -75,7 +83,8 @@ class apache {
 
 	file { "/var/www/Wikidata-logo-demo.png":
 		ensure => 'link',
-		target => '/srv/Wikidata-logo-demo.png';
+		target => '/srv/Wikidata-logo-demo.png',
+		require => File["/var/www"];
 	}
 
 }
