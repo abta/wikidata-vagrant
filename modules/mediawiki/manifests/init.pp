@@ -44,16 +44,16 @@ class mediawiki {
 		creates => "/srv/orig/LocalSettings.php",
 		command => "/usr/bin/php /srv/repo/maintenance/install.php Wikidata-repo admin --pass vagrant --dbname repo --dbuser root --dbpass vagrant --server '$mwserver' --scriptpath '/srv/repo' --confpath '/srv/orig/'",
 		logoutput => "on_failure";
-	}
+	} ->
 
 	file { "/var/www/srv":
-		ensure => 'directory';
+		ensure => "directory";
 	}
 
 	file { "/var/www/srv/repo":
-		require => File['/var/www/srv'],
-		ensure  => 'link',
-		target  => '/srv/repo';
+		require => File["/var/www/srv"],
+		ensure  => "link",
+		target  => "/srv/repo";
 	}
 
 # update script I

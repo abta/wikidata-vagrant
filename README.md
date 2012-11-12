@@ -22,7 +22,15 @@ http://127.0.0.1:8080/w/ and see a Wikidata repo install (later a client, too), 
 The `repo/` sub-folder in the repository is mounted as `/srv/repo`,
 and port 8080 on the host is forwarded to port 80 on the guest.
 
-The MySQL root password and the MediaWiki admin password are both "vagrant".
+The MySQL root credentials are:
+
+* Username: root
+* Password: vagrant
+
+The MediaWiki credentials are:
+
+* Username: admin
+* Password: vagrant
 
   [0]: http://vagrantup.com/v1/docs/getting-started/index.html
   [1]: https://www.virtualbox.org/wiki/Downloads
