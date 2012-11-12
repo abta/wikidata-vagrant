@@ -8,8 +8,7 @@
 ###  LocalSettings.php in the Vagrant project root.
 ###
 #####################################################################
-
-require( '../LocalSettings.php' );
+require_once( '/srv/orig/LocalSettings.php' );
 
 $wgArticlePath      = "/wiki/$1";
 

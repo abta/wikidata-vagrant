@@ -2,21 +2,21 @@ class mediawiki {
 
 	require mysql
 
-	$mwserver = "http://127.0.0.1:8080"
+	$mwserver = "http://127.0.0.1:8000"
 
-	file { "/etc/apache2/sites-available/wiki":
-		mode => 644,
-		owner => root,
-		group => root,
-		content => template("apache/sites/wiki"),
-		ensure => present,
-		require => Package["apache2"];
-	} ->
-
-	apache::enable_site { "wiki":
-		name => "wiki",
-		require => File["/etc/apache2/sites-available/wiki"];
-	}
+#	file { "/etc/apache2/sites-available/wiki":
+#		mode => 644,
+#		owner => root,
+#		group => root,
+#		content => template("apache/sites/wiki"),
+#		ensure => present,
+#		require => Package["apache2"];
+#	} ->
+#
+#	apache::enable_site { "wiki":
+#		name => "wiki",
+#		require => File["/etc/apache2/sites-available/wiki"];
+#	}
 
 	file { "/etc/apache2/sites-available/repo":
 		mode => 644,
@@ -39,8 +39,8 @@ class mediawiki {
 	}
 
 	exec { "repo_setup":
-		#require => File["/srv/orig"],
-		require => [Exec["mysql-set-password"], Service["apache2"], File["/srv/orig"]],
+		#require => [Exec["mysql-set-password"], Service["apache2"], File["/srv/orig"]],
+		require => [Exec["mysql-set-password"], File["/srv/orig"]],
 		creates => "/srv/orig/LocalSettings.php",
 		command => "/usr/bin/php /srv/repo/maintenance/install.php Wikidata-repo admin --pass vagrant --dbname repo --dbuser root --dbpass vagrant --server '$mwserver' --scriptpath '/srv/repo' --confpath '/srv/orig/'",
 		logoutput => "on_failure";
@@ -76,9 +76,4 @@ class mediawiki {
 		command => "/usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'";
 	}
 
-#	file { '/srv/client/LocalSettings.php':
-#		require => Exec["client_setup"],
-#		content => template('wikidata/wikibase-client-localsettings'),
-#		ensure => present;
-#	}
 }

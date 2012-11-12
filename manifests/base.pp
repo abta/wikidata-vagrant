@@ -24,4 +24,5 @@ include mysql
 include php
 include phpsh
 include apache
-include mediawiki
+include wikidata::repo
+include wikidata::client

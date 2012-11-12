@@ -14,8 +14,8 @@
                 allow from all
         </Directory>
 
-        Alias /w /srv/mediawiki
-        Alias /wiki /srv/mediawiki/index.php
+        Alias /client/w /var/www/srv/client
+        Alias /wiki /var/www/srv/client/index.php
 
         ErrorLog /var/log/apache2/error.log
 
