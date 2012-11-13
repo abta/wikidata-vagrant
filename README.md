@@ -16,11 +16,9 @@ git submodule update --init
 vagrant up
 ```
 
-It'll take some time, because it'll need to fetch the base precise32 box and MediaWiki plus the extensions. Once it's done, you should be able to browse to
-http://127.0.0.1:8080/w/ and see a Wikidata repo install (later a client, too), served by the guest VM, which is running Ubuntu Precise 32-bit.
+It'll take some time, because it'll need to fetch the base precise32 box and MediaWiki plus the extensions. Once it's done, browse to http://127.0.0.1:8080. You find a Wikidata repo and client preinstalled, served by the guest VM, which is running Ubuntu Precise 32-bit.
 
-The `repo/` sub-folder in the repository is mounted as `/srv/repo`,
-and port 8080 on the host is forwarded to port 80 on the guest.
+The vagrant root folder is mounted `/srv`, and port 8080 on the host is forwarded to port 80 on the guest.
 
 The MySQL root credentials are:
 
