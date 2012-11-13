@@ -1,0 +1,19 @@
+/*
+Theme URI: http://wikimedia.org/
+Description: A wordpress theme based on the Vector skin for mediawiki
+Version: 1.2
+Author: Adam Miller
+Tags: light, silver, two-columns, fixed-width, custom-header
+*/
+/* modified by WMDE - Wikidata team */
+
+/* Framework */
+html,
+body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        font-size: 1em;
+        background-color: #f3f3f3;
+}

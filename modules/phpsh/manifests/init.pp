@@ -1,10 +1,12 @@
 class phpsh {
 
 	package { "python-pip":
-		ensure => latest;
+		require => Exec["apt-update"],
+		ensure  => latest;
 	}
 
 	package { "exuberant-ctags":
+		require => Exec["apt-update"],
 		ensure => latest;
 	}
 
@@ -15,8 +17,8 @@ class phpsh {
 		command => "pip install https://github.com/facebook/phpsh/tarball/master";
 	}
 
-	file { '/etc/phpsh':
-		ensure => 'directory';
+	file { "/etc/phpsh":
+		ensure => "directory";
 	}
 
 	file { "/etc/phpsh/rc.php":

@@ -1,11 +1,12 @@
 class memcached {
 
-	$memcached_size = '200' # Mb
-	$memcached_port = '11000'
-	$memcached_ip = '0.0.0.0'
+	$memcached_size = "200" # Mb
+	$memcached_port = "11000"
+	$memcached_ip = "0.0.0.0"
 
 	package { memcached:
-		ensure => latest;
+		require => Exec["apt-update"],
+		ensure  => latest;
 	}
 
 	file { "/etc/memcached.conf":

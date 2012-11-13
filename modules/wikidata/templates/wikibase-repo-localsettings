@@ -1,0 +1,36 @@
+<?php
+#####################################################################
+### THIS FILE IS MANAGED BY PUPPET
+### puppet:///templates/mediawiki/labs-localsettings
+###
+###  Changes to this file will be clobbered by Puppet.
+###  If you need to hand-edit local settings, modify
+###  LocalSettings.php in the Vagrant project root.
+###
+#####################################################################
+require_once( '/srv/orig-repo/LocalSettings.php' );
+
+$wgArticlePath      = "/repo/wiki/$1";
+$wgLogo             = "$wgStylePath/common/images/Wikidata-logo-demorepo.png";
+
+// Wikidata: Wikibase lib and repo extensions
+// (dependencies: Diff, DataValues and ULS extensions)
+require_once( "/srv/extensions/Diff/Diff.php");
+require_once( "/srv/extensions/DataValues/DataValues.php" );
+require_once( "/srv/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
+require_once( "/srv/extensions/Wikibase/lib/WikibaseLib.php");
+require_once( "/srv/extensions/Wikibase/repo/Wikibase.php");
+require_once( "/srv/extensions/DismissableSiteNotice/DismissableSiteNotice.php");
+
+// Debug settings
+$wgDebugToolbar = true;
+$wgShowExceptionDetails = true;
+$wgEnableJavaScriptTest = true;
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+
+// Include the Wikidata example settings file
+require_once( "/srv/extensions/Wikibase/repo/ExampleSettings.php" );
+
+$wgSiteNotice = '<div style="font-size: 90%; background: #FFCC33; padding: 1ex; border: #940 dotted; margin-top: 1ex; margin-bottom: 1ex; "> This is a demo system showing the current state of Wikidata development. It is going to evolve over the next few weeks.<br>If you find bugs please report them in [https://bugzilla.wikimedia.org/enter_bug.cgi?product=MediaWiki%20extensions Bugzilla] for the Wikidata Client or Repo component. [https://meta.wikimedia.org/wiki/Wikidata/Development/Howto_Bugreport Here is how to submit a bug.] If you would like to discuss something or give input please use the [https://lists.wikimedia.org/mailman/listinfo/wikidata-l mailing list]. Thank you!  </div>';
