@@ -16,3 +16,6 @@
 [submodule "client"]
 	path = client
 	url = https://gerrit.wikimedia.org/r/p/mediawiki/core.git
+[submodule "extensions/DismissableSiteNotice"]
+	path = extensions/DismissableSiteNotice
+	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/DismissableSiteNotice.git

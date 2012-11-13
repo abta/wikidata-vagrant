@@ -52,6 +52,12 @@ class wikidata::repo {
 	}
 
 # get Wikidata-specific stuff AFTER MW is up
+
+	file { "/var/www/srv/repo/skins/common/images/Wikidata-logo-demorepo.png":
+		source => "puppet:///modules/wikidata/Wikidata-logo-demorepo.png",
+		require => Exec["update"];
+	}
+
 	file { "/srv/repo/LocalSettings.php":
 		require => [Exec["repo_setup"], Exec["update"]],
 		content => template('wikidata/wikibase-repo-localsettings'),
@@ -65,6 +71,19 @@ class wikidata::repo {
 		logoutput => "on_failure";
 	}
 
+# for this to work we probably need to declare the mw install path
+## import items
+#	exec { "import_items":
+#		require => Exec["update2"],
+#		cwd => "/srv/extensions/Wikibase/repo/maintenance",
+#		command => "/usr/bin/php importInterlang.php --verbose --ignore-errors simple simple-elements.csv";
+#	}
+## import properties
+#	exec { "import_properties":
+#		require => Exec["update2"],
+#		cwd => "/srv/extensions/Wikibase/repo/maintenance",
+#		command => "/usr/bin/php importProperties.php --verbose en en-elements-properties.csv";
+#	}
 }
 
 # client
@@ -112,6 +131,13 @@ class wikidata::client {
 	}
 
 # get Wikidata-specific stuff AFTER MW is up
+
+
+	file { "/var/www/srv/client/skins/common/images/Wikidata-logo-democlient.png":
+		source => "puppet:///modules/wikidata/Wikidata-logo-democlient.png",
+		require => Exec["update"];
+	}
+
 	file { "/srv/client/LocalSettings.php":
 		require => [Exec["client_setup"], Exec["client_update"]],
 		content => template('wikidata/wikibase-client-localsettings'),
