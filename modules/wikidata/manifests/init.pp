@@ -67,23 +67,28 @@ class wikidata::repo {
 # update script II
 	exec { "update2":
 		require => [Exec["update"], File["/srv/repo/LocalSettings.php"]],
-		command => "/usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php' || /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'",
+		provider => shell,
+		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php' || /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'",
 		logoutput => "on_failure";
 	}
 
 # for this to work we probably need to declare the mw install path
 ## import items
-#	exec { "import_items":
-#		require => Exec["update2"],
-#		cwd => "/srv/extensions/Wikibase/repo/maintenance",
-#		command => "/usr/bin/php importInterlang.php --verbose --ignore-errors simple simple-elements.csv";
-#	}
-## import properties
-#	exec { "import_properties":
-#		require => Exec["update2"],
-#		cwd => "/srv/extensions/Wikibase/repo/maintenance",
-#		command => "/usr/bin/php importProperties.php --verbose en en-elements-properties.csv";
-#	}
+	exec { "import_items":
+		require => Exec["update2"],
+		provider => shell,
+		cwd => "/srv/extensions/Wikibase/repo/maintenance",
+		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php importInterlang.php --verbose --ignore-errors simple simple-elements.csv",
+		logoutput => "on_failure";
+	}
+# import properties
+	exec { "import_properties":
+		require => Exec["update2"],
+		provider => shell,
+		cwd => "/srv/extensions/Wikibase/repo/maintenance",
+		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php importProperties.php --verbose en en-elements-properties.csv",
+		logoutput => "on_failure";
+	}
 }
 
 # client
@@ -132,7 +137,6 @@ class wikidata::client {
 
 # get Wikidata-specific stuff AFTER MW is up
 
-
 	file { "/var/www/srv/client/skins/common/images/Wikidata-logo-democlient.png":
 		source => "puppet:///modules/wikidata/Wikidata-logo-democlient.png",
 		require => Exec["update"];
@@ -149,6 +153,25 @@ class wikidata::client {
 		require => [Exec["client_update"], File["/srv/client/LocalSettings.php"]],
 		command => "/usr/bin/php /srv/client/maintenance/update.php --quick --conf '/srv/client/LocalSettings.php'",
 		logoutput => "on_failure";
+	}
+
+# for client repo replication
+	user { "www-data":
+		ensure => present
+	}
+# replication log file
+	file { "/var/log/wikidata-replication.log":
+		ensure => present,
+		owner => "www-data",
+		group => "www-data",
+		mode => "0664";
+	}
+# poll for changes
+	cron { "pollForChanges":
+		ensure => present,
+		command => "/usr/bin/php /srv/extensions/Wikibase/lib/maintenance/pollForChanges.php > /var/log/wikidata-replication.log",
+		user => "www-data",
+		minute => "*/5";
 	}
 
 }
