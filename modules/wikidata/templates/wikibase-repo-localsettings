@@ -8,9 +8,9 @@
 ###  LocalSettings.php in the Vagrant project root.
 ###
 #####################################################################
-require_once( '/srv/orig/LocalSettings.php' );
+require_once( '/srv/orig-repo/LocalSettings.php' );
 
-$wgArticlePath      = "/wiki/$1";
+$wgArticlePath      = "/repo/wiki/$1";
 
 
 // Wikidata: Wikibase lib and repo extensions

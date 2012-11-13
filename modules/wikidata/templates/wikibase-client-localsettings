@@ -8,24 +8,24 @@
 ###  LocalSettings.php in the Vagrant project root.
 ###
 #####################################################################
-require_once( '/srv/orig/LocalSettings.php' );
+require_once( '/srv/orig-client/LocalSettings.php' );
 
-$wgArticlePath      = "/wiki/$1";
+$wgArticlePath      = "/client/wiki/$1";
 
 
 // Wikidata: Wikibase lib and client extensions
 // (dependencies: Diff, DataValues and ULS extensions)
-require_once( "$IP/extensions/Diff/Diff.php");
-require_once( "$IP/extensions/DataValues/DataValues.php" );
-require_once( "$IP/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
-require_once( "$IP/extensions/Wikibase/lib/WikibaseLib.php");
-require_once( "$IP/extensions/Wikibase/client/WikibaseClient.php");
+require_once( "/srv/extensions/Diff/Diff.php");
+require_once( "/srv/extensions/DataValues/DataValues.php" );
+require_once( "/srv/extensions/UniversalLanguageSelector/UniversalLanguageSelector.php" );
+require_once( "/srv/extensions/Wikibase/lib/WikibaseLib.php");
+require_once( "/srv/extensions/Wikibase/client/WikibaseClient.php");
 
 
 // Configuration of Wikibase Client
 //$wgWBSettings['namespaces'] = array( NS_MAIN, NS_CATEGORY );
 $wgWBSettings['repoBase'] = 'http://localhost/repo/wiki/';
-$wgWBSettings['repoApi'] = 'http://localhost/repo/w/api.php';
+$wgWBSettings['repoApi'] = 'http://localhost/repo/api.php';
 $wgWBSettings['siteGlobalID'] = 'enwiki';
 $wgWBSettings['siteGroup'] = 'wiki';
 $wgWBSettings['sort'] = 'code';
