@@ -14,6 +14,8 @@ git clone https://github.com/SilkeMeyer/wikidata-vagrant.git
 cd ./wikidata-vagrant
 git submodule update --init
 vagrant up
+# If the mediawiki update script (Wikidata::Repo/Exec[update]) fails, reboot the Vagrant machine by running
+vagrant reload
 ```
 
 It'll take some time, because it'll need to fetch the base precise32 box and MediaWiki plus the extensions. Once it's done, browse to http://127.0.0.1:8080. You find a Wikidata repo and client preinstalled, served by the guest VM, which is running Ubuntu Precise 32-bit.
