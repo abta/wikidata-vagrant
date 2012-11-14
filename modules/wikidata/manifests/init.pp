@@ -44,7 +44,7 @@ class wikidata::repo {
 	}
 
 # update script I
-	exec { "update":
+	exec { "repo_update":
 		require => Exec["repo_setup"],
 		command => "/usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/orig-repo/LocalSettings.php'",
 		unless => "/usr/bin/test -e /srv/repo/LocalSettings.php",
@@ -55,18 +55,18 @@ class wikidata::repo {
 
 	file { "/var/www/srv/repo/skins/common/images/Wikidata-logo-demorepo.png":
 		source => "puppet:///modules/wikidata/Wikidata-logo-demorepo.png",
-		require => Exec["update"];
+		require => Exec["repo_update"];
 	}
 
 	file { "/srv/repo/LocalSettings.php":
-		require => [Exec["repo_setup"], Exec["update"]],
+		require => [Exec["repo_setup"], Exec["repo_update"]],
 		content => template('wikidata/wikibase-repo-localsettings'),
 		ensure => present;
 	}
 
 # update script II
-	exec { "update2":
-		require => [Exec["update"], File["/srv/repo/LocalSettings.php"]],
+	exec { "repo_update2":
+		require => [Exec["repo_update"], File["/srv/repo/LocalSettings.php"]],
 		provider => shell,
 		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php' || /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'",
 		logoutput => "on_failure";
@@ -75,15 +75,16 @@ class wikidata::repo {
 # for this to work we probably need to declare the mw install path
 ## import items
 	exec { "import_items":
-		require => Exec["update2"],
+		require => Exec["repo_update2"],
 		provider => shell,
 		cwd => "/srv/extensions/Wikibase/repo/maintenance",
 		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php importInterlang.php --verbose --ignore-errors simple simple-elements.csv",
 		logoutput => "on_failure";
 	}
+
 # import properties
 	exec { "import_properties":
-		require => Exec["update2"],
+		require => Exec["repo_update2"],
 		provider => shell,
 		cwd => "/srv/extensions/Wikibase/repo/maintenance",
 		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php importProperties.php --verbose en en-elements-properties.csv",
@@ -96,19 +97,6 @@ class wikidata::repo {
 class wikidata::client {
 
 	require wikidata::repo
-
-#	file { "/etc/apache2/sites-available/client":
-#		mode => 644,
-#		owner => root,
-#		group => root,
-#		content => template("apache/sites/client"),
-#		ensure => present;
-#	} ->
-#
-#	apache::enable_site { "client":
-#		name => "client",
-#		require => File["/etc/apache2/sites-available/client"];
-#	}
 
 	file { "/srv/orig-client/":
 		ensure => 'directory';
@@ -139,7 +127,7 @@ class wikidata::client {
 
 	file { "/var/www/srv/client/skins/common/images/Wikidata-logo-democlient.png":
 		source => "puppet:///modules/wikidata/Wikidata-logo-democlient.png",
-		require => Exec["update"];
+		require => Exec["repo_update"];
 	}
 
 	file { "/srv/client/LocalSettings.php":
@@ -152,6 +140,14 @@ class wikidata::client {
 	exec { "client_update2":
 		require => [Exec["client_update"], File["/srv/client/LocalSettings.php"]],
 		command => "/usr/bin/php /srv/client/maintenance/update.php --quick --conf '/srv/client/LocalSettings.php'",
+		logoutput => "on_failure";
+	}
+
+	exec { "populate_interwiki":
+		require => Exec["client_update2"],
+		cwd => "/srv/extensions/Wikibase/client/maintenance",
+		provider => shell,
+		command => "MW_INSTALL_PATH=/srv/client /usr/bin/php populateInterwiki.php",
 		logoutput => "on_failure";
 	}
 
@@ -169,9 +165,10 @@ class wikidata::client {
 # poll for changes
 	cron { "pollForChanges":
 		ensure => present,
-		command => "/usr/bin/php /srv/extensions/Wikibase/lib/maintenance/pollForChanges.php > /var/log/wikidata-replication.log",
+		command => "MW_INSTALL_PATH=/srv/client /usr/bin/php /srv/extensions/Wikibase/lib/maintenance/pollForChanges.php --since \"yesterday\" >> /var/log/wikidata-replication.log",
 		user => "www-data",
-		minute => "*/5";
+		# pollForChanges starts 1 minute after reboot
+		minute => "*/1";
 	}
 
 }

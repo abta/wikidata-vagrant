@@ -26,21 +26,82 @@ require_once( "/srv/extensions/DismissableSiteNotice/DismissableSiteNotice.php")
 
 // Configuration of Wikibase Client
 //$wgWBSettings['namespaces'] = array( NS_MAIN, NS_CATEGORY );
-$wgWBSettings['repoBase'] = 'http://localhost/repo/wiki/';
-$wgWBSettings['repoApi'] = 'http://localhost/repo/api.php';
-$wgWBSettings['siteGlobalID'] = 'enwiki';
-$wgWBSettings['siteGroup'] = 'wiki';
-$wgWBSettings['sort'] = 'code';
-$wgWBSettings['sortPrepend'] = array( 'en' );
+$wgWBSettings['repoNamespaces'] = array(
+		'wikibase-item' => 'Item',
+		'wikibase-property' => 'Property'
+	);
+$wgWBSettings['repoBase'] = "http://localhost:8080/repo/wiki/";
+$wgWBSettings['repoApi'] = "http://localhost/repo/api.php";
+$wgWBSettings['siteGlobalID'] = "enwiki";
+//$wgWBSettings['siteGroup'] = "wiki";
+//$wgWBSettings['sort'] = 'code';
+//$wgWBSettings['sortPrepend'] = array( 'en' );
+
 // Database name of the repository, for use by the pollForChanges script.
 // This requires the given database name to be known to LBFactory, see
 // $wgLBFactoryConf below.
 $wgWBSettings['changesDatabase'] = "repo";
 
 // debug settings
-$wgDebugToolbar = true;
-$wgShowExceptionDetails = true;
-$wgEnableJavaScriptTest = true;
-ini_set("display_errors", 1);
+//$wgDebugToolbar = true;
+//$wgShowExceptionDetails = true;
+//$wgEnableJavaScriptTest = true;
+//ini_set("display_errors", 1);
+
+# Query string length limit for ResourceLoader. You should only set this if
+# your web server has a query string length limit (then set it to that limit),
+# or if you have suhosin.get.max_value_length set in php.ini (then set it to
+# that value)
+$wgResourceLoaderMaxQueryLength = -1;
+
+$wgLBFactoryConf = array(
+	// In order to seamlessly access a remote wiki, as the pollForChanges script needs to do, LBFactory_Multi must be used.
+	'class' => 'LBFactory_Multi',
+
+	// Connect to all databases using the same credentials.
+	'serverTemplate' => array(
+		'dbname'      => $wgDBname,
+		'user'        => $wgDBuser,
+		'password'    => $wgDBpassword,
+		'type'        => 'mysql',
+		'flags'       => DBO_DEFAULT | DBO_DEBUG,
+	),
+
+	// Configure two sections, one for the repo and one for the client.
+	// Each section contains only one server.
+	'sectionLoads' => array(
+		'DEFAULT' => array(
+			'localhost' => 1,
+		),
+		'repo' => array(
+			'local1' => 1,
+		),
+	),
+
+	// Map the wiki database names to sections. Database names must be unique,
+	// i.e. may not exist in more than one section.
+	'sectionsByDB' => array(
+		$wgDBname => 'DEFAULT',
+		'repowiki' => 'repo',
+	),
+
+	// Map host names to IP addresses to bypass DNS.
+	//
+	// NOTE: Even if all sections run on the same MySQL server (typical for a test setup),
+	// they must use different IP addresses, and MySQL must listen on all of them.
+	// The easiest way to do this is to set bind-address = 0.0.0.0 in the MySQL
+	// configuration. Beware that this makes MySQL listen on you ethernet port too.
+	// Safer alternatives include setting up mysql-proxy or mysqld_multi.
+	'hostsByName' => array(
+		'localhost' => '127.0.0.1:3306',
+		'local1' => '127.0.2.1',
+		'local2' => '127.0.2.2',
+		'local3' => '127.0.2.3',
+	),
+	
+	// Set up as fake master, because there are no slaves.
+	'masterTemplateOverrides' => array( 'fakeMaster' => true ),
+);
+
 
 $wgSiteNotice = '<div style="font-size: 90%; background: #FFCC33; padding: 1ex; border: #940 dotted; margin-top: 1ex; margin-bottom: 1ex; "> This is a demo system showing the current state of Wikidata development. It is going to evolve over the next few weeks.<br> If you find bugs please report them in [https://bugzilla.wikimedia.org/enter_bug.cgi?product=MediaWiki%20extensions Bugzilla] for the Wikidata Client or Repo component. [https://meta.wikimedia.org/wiki/Wikidata/Development/Howto_Bugreport Here is how to submit a bug.] If you would like to discuss something or give input please use the [https://lists.wikimedia.org/mailman/listinfo/wikidata-l mailing list]. Thank you!  </div>';
