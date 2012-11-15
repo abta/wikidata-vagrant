@@ -68,7 +68,7 @@ class wikidata::repo {
 	exec { "repo_update2":
 		require => [Exec["repo_update"], File["/srv/repo/LocalSettings.php"]],
 		provider => shell,
-		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php' || /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'",
+		command => "MW_INSTALL_PATH=/srv/repo /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php' || MW_INSTALL_PATH=/srv/repo /usr/bin/php /srv/repo/maintenance/update.php --quick --conf '/srv/repo/LocalSettings.php'",
 		logoutput => "on_failure";
 	}
 
@@ -139,7 +139,8 @@ class wikidata::client {
 # update script II
 	exec { "client_update2":
 		require => [Exec["client_update"], File["/srv/client/LocalSettings.php"]],
-		command => "/usr/bin/php /srv/client/maintenance/update.php --quick --conf '/srv/client/LocalSettings.php'",
+		provider => shell,
+		command => "MW_INSTALL_PATH=/srv/client /usr/bin/php /srv/client/maintenance/update.php --quick --conf '/srv/client/LocalSettings.php' || MW_INSTALL_PATH=/srv/client /usr/bin/php /srv/client/maintenance/update.php --quick --conf '/srv/client/LocalSettings.php'",
 		logoutput => "on_failure";
 	}
 
@@ -165,10 +166,10 @@ class wikidata::client {
 # poll for changes
 	cron { "pollForChanges":
 		ensure => present,
-		command => "MW_INSTALL_PATH=/srv/client /usr/bin/php /srv/extensions/Wikibase/lib/maintenance/pollForChanges.php --since \"yesterday\" >> /var/log/wikidata-replication.log",
+		require => Exec["client_update2"],
+		command => "/bin/sleep 300 ; MW_INSTALL_PATH=/srv/client /usr/bin/php /srv/extensions/Wikibase/lib/maintenance/pollForChanges.php --since \"yesterday\" >> /var/log/wikidata-replication.log",
 		user => "www-data",
-		# pollForChanges starts 1 minute after reboot
-		minute => "*/1";
+		minute => "*/5";
 	}
 
 }
